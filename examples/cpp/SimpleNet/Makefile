@@ -23,10 +23,10 @@ USE_HDF         ?= 1		# Include HDF5 support (requires HDF5)
 ALT_MAPPERS     ?= 0		# Include alternative mappers (not recommended)
 
 # Put the binary file name here
-OUTFILE		?= inception
+OUTFILE		?= simplenet 
 # List all the application source files here
-GEN_SRC		= inception.cc
-GEN_GPU_SRC	= inception.cu
+GEN_SRC		= simplenet.cc
+GEN_GPU_SRC	= simplenet.cu
 
 ifndef FF_HOME
 $(error FF_HOME variable is not defined, aborting build)

@@ -16,7 +16,7 @@ echo " Defaults for Linux machine"
 #INSTALL_DIR=
 
 # set build type
-BUILD_TYPE=Debug
+BUILD_TYPE=Release
 
 # set CUDA Arch, replace xx with your GPU architecture
 #FF_CUDA_ARCH=xx
@@ -31,10 +31,10 @@ CUDNN_DIR=/usr/local/cuda
 FF_USE_PYTHON=ON
 
 # enable NCCL
-FF_USE_NCCL=ON
+FF_USE_NCCL=OFF
 
 # enable GASNet
-FF_USE_GASNET=ON
+FF_USE_GASNET=OFF
 
 # select GASNET conduit
 FF_GASNET_CONDUIT=mpi
