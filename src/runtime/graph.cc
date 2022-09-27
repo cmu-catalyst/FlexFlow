@@ -41,6 +41,9 @@
 #include "legion.h"
 #include "legion/legion_utilities.h"
 
+#include <nlohmann/json.hpp>
+
+
 namespace FlexFlow::PCG {
 
 using namespace Legion;
@@ -1569,6 +1572,58 @@ GraphOptimalViewSerialized
   model->simulator = simulator.get();
   std::unique_ptr<Graph> best_graph;
   std::unordered_map<Node, MachineView> optimal_views;
+
+  if (true) {
+    using json = nlohmann::json;
+    json g_json;
+    bool flag = false;
+    const char* filename = "profile.json";
+    {
+      std::ifstream json_file(filename);
+      if (json_file) {
+        json_file >> g_json;
+        flag = true;
+      }
+    }
+    Graph* graph = new Graph(model);
+    std::unordered_map<const FlexFlow::Op*, Node> op_to_node_map;
+    std::string bs = std::to_string(model->config.batchSize);
+    for (const FlexFlow::Op* dstOp : model->operators) {
+      std::string id = std::to_string(dstOp->op_guid);
+      CostMetrics cost_metric = simulator->measure_operator_cost(dstOp, model->all_valid_views[0]);
+      if (!flag) {
+        g_json[id] = json();
+        g_json[id]["inputs"] = json::array();
+        g_json[id]["input_size"] = json::array();
+        for (int j = 0; j < dstOp->numInputs; j++) {
+          const FlexFlow::Op* srcOp = dstOp->inputs[j]->owner_op;
+          g_json[id]["inputs"].push_back(srcOp->op_guid);
+          g_json[id]["input_size"].push_back(dstOp->inputs[j]->get_shape().get_piece_size() / model->config.batchSize);
+        }
+        size_t weight_size = 0;
+        Layer* layer = nullptr;
+        for (size_t k = 0; k < model->layers.size(); k++)
+          if (dstOp->layer_guid == model->layers[k]->layer_guid) {
+            assert(!layer);
+            layer = model->layers[k];
+          }
+        if (layer) {
+          for (int j = 0; j < layer->numWeights; j++)
+            weight_size += layer->weights[j]->get_volume() * data_type_size(layer->weights[j]->data_type);
+        }
+
+        g_json[id]["weight_size"] = weight_size;
+        g_json[id]["runtime"] = json();
+      }
+      g_json[id]["runtime"][bs] = cost_metric.forward_time + cost_metric.backward_time;
+    }
+    {
+      std::ofstream json_file(filename);
+      json_file << g_json;
+    }
+    exit(0);
+  }
+
   if (model->config.only_data_parallel) {
     Graph *graph = new Graph(model);
     std::unordered_map<FlexFlow::Op const *, Node> op_to_node_map;
