@@ -1,0 +1,186 @@
+x; ; transformer_blocks_0_attention_linear_layers_0,transformer_blocks_0_attention_linear_layers_1,transformer_blocks_0_attention_linear_layers_2,add,; INPUT
+transformer_blocks_0_attention_linear_layers_0; x,; view,; LINEAR; 256; 10; 1
+view; transformer_blocks_0_attention_linear_layers_0,; transpose,; VIEW; 1; -1; 8; 32
+transpose; view,; matmul,; TRANSPOSE; 1; 2
+transformer_blocks_0_attention_linear_layers_1; x,; view_1,; LINEAR; 256; 10; 1
+view_1; transformer_blocks_0_attention_linear_layers_1,; transpose_1,; VIEW; 1; -1; 8; 32
+transpose_1; view_1,; transpose_3,; TRANSPOSE; 1; 2
+transformer_blocks_0_attention_linear_layers_2; x,; view_2,; LINEAR; 256; 10; 1
+view_2; transformer_blocks_0_attention_linear_layers_2,; transpose_2,; VIEW; 1; -1; 8; 32
+transpose_2; view_2,; matmul_1,; TRANSPOSE; 1; 2
+transpose_3; transpose_1,; matmul,; TRANSPOSE; -2; -1
+matmul; transpose,transpose_3,; truediv,; BATCH_MATMUL
+truediv; matmul,; softmax,; SCALAR_TRUEDIV; 5.656854249492381
+softmax; truediv,; matmul_1,; SOFTMAX
+matmul_1; softmax,transpose_2,; transpose_4,; BATCH_MATMUL
+transpose_4; matmul_1,; contiguous,; TRANSPOSE; 1; 2
+contiguous; transpose_4,; view_3,; CONTIGUOUS
+view_3; contiguous,; transformer_blocks_0_attention_output_linear,; VIEW; 1; -1; 256
+transformer_blocks_0_attention_output_linear; view_3,; add,; LINEAR; 256; 10; 1
+add; x,transformer_blocks_0_attention_output_linear,; transformer_blocks_0_feed_forward_w_1,add_1,; ADD
+transformer_blocks_0_feed_forward_w_1; add,; transformer_blocks_0_feed_forward_activation,; LINEAR; 1024; 10; 1
+transformer_blocks_0_feed_forward_activation; transformer_blocks_0_feed_forward_w_1,; transformer_blocks_0_feed_forward_w_2,; RELU
+transformer_blocks_0_feed_forward_w_2; transformer_blocks_0_feed_forward_activation,; add_1,; LINEAR; 256; 10; 1
+add_1; add,transformer_blocks_0_feed_forward_w_2,; transformer_blocks_1_attention_linear_layers_0,transformer_blocks_1_attention_linear_layers_1,transformer_blocks_1_attention_linear_layers_2,add_2,; ADD
+transformer_blocks_1_attention_linear_layers_0; add_1,; view_4,; LINEAR; 256; 10; 1
+view_4; transformer_blocks_1_attention_linear_layers_0,; transpose_5,; VIEW; 1; -1; 8; 32
+transpose_5; view_4,; matmul_2,; TRANSPOSE; 1; 2
+transformer_blocks_1_attention_linear_layers_1; add_1,; view_5,; LINEAR; 256; 10; 1
+view_5; transformer_blocks_1_attention_linear_layers_1,; transpose_6,; VIEW; 1; -1; 8; 32
+transpose_6; view_5,; transpose_8,; TRANSPOSE; 1; 2
+transformer_blocks_1_attention_linear_layers_2; add_1,; view_6,; LINEAR; 256; 10; 1
+view_6; transformer_blocks_1_attention_linear_layers_2,; transpose_7,; VIEW; 1; -1; 8; 32
+transpose_7; view_6,; matmul_3,; TRANSPOSE; 1; 2
+transpose_8; transpose_6,; matmul_2,; TRANSPOSE; -2; -1
+matmul_2; transpose_5,transpose_8,; truediv_1,; BATCH_MATMUL
+truediv_1; matmul_2,; softmax_1,; SCALAR_TRUEDIV; 5.656854249492381
+softmax_1; truediv_1,; matmul_3,; SOFTMAX
+matmul_3; softmax_1,transpose_7,; transpose_9,; BATCH_MATMUL
+transpose_9; matmul_3,; contiguous_1,; TRANSPOSE; 1; 2
+contiguous_1; transpose_9,; view_7,; CONTIGUOUS
+view_7; contiguous_1,; transformer_blocks_1_attention_output_linear,; VIEW; 1; -1; 256
+transformer_blocks_1_attention_output_linear; view_7,; add_2,; LINEAR; 256; 10; 1
+add_2; add_1,transformer_blocks_1_attention_output_linear,; transformer_blocks_1_feed_forward_w_1,add_3,; ADD
+transformer_blocks_1_feed_forward_w_1; add_2,; transformer_blocks_1_feed_forward_activation,; LINEAR; 1024; 10; 1
+transformer_blocks_1_feed_forward_activation; transformer_blocks_1_feed_forward_w_1,; transformer_blocks_1_feed_forward_w_2,; RELU
+transformer_blocks_1_feed_forward_w_2; transformer_blocks_1_feed_forward_activation,; add_3,; LINEAR; 256; 10; 1
+add_3; add_2,transformer_blocks_1_feed_forward_w_2,; transformer_blocks_2_attention_linear_layers_0,transformer_blocks_2_attention_linear_layers_1,transformer_blocks_2_attention_linear_layers_2,add_4,; ADD
+transformer_blocks_2_attention_linear_layers_0; add_3,; view_8,; LINEAR; 256; 10; 1
+view_8; transformer_blocks_2_attention_linear_layers_0,; transpose_10,; VIEW; 1; -1; 8; 32
+transpose_10; view_8,; matmul_4,; TRANSPOSE; 1; 2
+transformer_blocks_2_attention_linear_layers_1; add_3,; view_9,; LINEAR; 256; 10; 1
+view_9; transformer_blocks_2_attention_linear_layers_1,; transpose_11,; VIEW; 1; -1; 8; 32
+transpose_11; view_9,; transpose_13,; TRANSPOSE; 1; 2
+transformer_blocks_2_attention_linear_layers_2; add_3,; view_10,; LINEAR; 256; 10; 1
+view_10; transformer_blocks_2_attention_linear_layers_2,; transpose_12,; VIEW; 1; -1; 8; 32
+transpose_12; view_10,; matmul_5,; TRANSPOSE; 1; 2
+transpose_13; transpose_11,; matmul_4,; TRANSPOSE; -2; -1
+matmul_4; transpose_10,transpose_13,; truediv_2,; BATCH_MATMUL
+truediv_2; matmul_4,; softmax_2,; SCALAR_TRUEDIV; 5.656854249492381
+softmax_2; truediv_2,; matmul_5,; SOFTMAX
+matmul_5; softmax_2,transpose_12,; transpose_14,; BATCH_MATMUL
+transpose_14; matmul_5,; contiguous_2,; TRANSPOSE; 1; 2
+contiguous_2; transpose_14,; view_11,; CONTIGUOUS
+view_11; contiguous_2,; transformer_blocks_2_attention_output_linear,; VIEW; 1; -1; 256
+transformer_blocks_2_attention_output_linear; view_11,; add_4,; LINEAR; 256; 10; 1
+add_4; add_3,transformer_blocks_2_attention_output_linear,; transformer_blocks_2_feed_forward_w_1,add_5,; ADD
+transformer_blocks_2_feed_forward_w_1; add_4,; transformer_blocks_2_feed_forward_activation,; LINEAR; 1024; 10; 1
+transformer_blocks_2_feed_forward_activation; transformer_blocks_2_feed_forward_w_1,; transformer_blocks_2_feed_forward_w_2,; RELU
+transformer_blocks_2_feed_forward_w_2; transformer_blocks_2_feed_forward_activation,; add_5,; LINEAR; 256; 10; 1
+add_5; add_4,transformer_blocks_2_feed_forward_w_2,; transformer_blocks_3_attention_linear_layers_0,transformer_blocks_3_attention_linear_layers_1,transformer_blocks_3_attention_linear_layers_2,add_6,; ADD
+transformer_blocks_3_attention_linear_layers_0; add_5,; view_12,; LINEAR; 256; 10; 1
+view_12; transformer_blocks_3_attention_linear_layers_0,; transpose_15,; VIEW; 1; -1; 8; 32
+transpose_15; view_12,; matmul_6,; TRANSPOSE; 1; 2
+transformer_blocks_3_attention_linear_layers_1; add_5,; view_13,; LINEAR; 256; 10; 1
+view_13; transformer_blocks_3_attention_linear_layers_1,; transpose_16,; VIEW; 1; -1; 8; 32
+transpose_16; view_13,; transpose_18,; TRANSPOSE; 1; 2
+transformer_blocks_3_attention_linear_layers_2; add_5,; view_14,; LINEAR; 256; 10; 1
+view_14; transformer_blocks_3_attention_linear_layers_2,; transpose_17,; VIEW; 1; -1; 8; 32
+transpose_17; view_14,; matmul_7,; TRANSPOSE; 1; 2
+transpose_18; transpose_16,; matmul_6,; TRANSPOSE; -2; -1
+matmul_6; transpose_15,transpose_18,; truediv_3,; BATCH_MATMUL
+truediv_3; matmul_6,; softmax_3,; SCALAR_TRUEDIV; 5.656854249492381
+softmax_3; truediv_3,; matmul_7,; SOFTMAX
+matmul_7; softmax_3,transpose_17,; transpose_19,; BATCH_MATMUL
+transpose_19; matmul_7,; contiguous_3,; TRANSPOSE; 1; 2
+contiguous_3; transpose_19,; view_15,; CONTIGUOUS
+view_15; contiguous_3,; transformer_blocks_3_attention_output_linear,; VIEW; 1; -1; 256
+transformer_blocks_3_attention_output_linear; view_15,; add_6,; LINEAR; 256; 10; 1
+add_6; add_5,transformer_blocks_3_attention_output_linear,; transformer_blocks_3_feed_forward_w_1,add_7,; ADD
+transformer_blocks_3_feed_forward_w_1; add_6,; transformer_blocks_3_feed_forward_activation,; LINEAR; 1024; 10; 1
+transformer_blocks_3_feed_forward_activation; transformer_blocks_3_feed_forward_w_1,; transformer_blocks_3_feed_forward_w_2,; RELU
+transformer_blocks_3_feed_forward_w_2; transformer_blocks_3_feed_forward_activation,; add_7,; LINEAR; 256; 10; 1
+add_7; add_6,transformer_blocks_3_feed_forward_w_2,; transformer_blocks_4_attention_linear_layers_0,transformer_blocks_4_attention_linear_layers_1,transformer_blocks_4_attention_linear_layers_2,add_8,; ADD
+transformer_blocks_4_attention_linear_layers_0; add_7,; view_16,; LINEAR; 256; 10; 1
+view_16; transformer_blocks_4_attention_linear_layers_0,; transpose_20,; VIEW; 1; -1; 8; 32
+transpose_20; view_16,; matmul_8,; TRANSPOSE; 1; 2
+transformer_blocks_4_attention_linear_layers_1; add_7,; view_17,; LINEAR; 256; 10; 1
+view_17; transformer_blocks_4_attention_linear_layers_1,; transpose_21,; VIEW; 1; -1; 8; 32
+transpose_21; view_17,; transpose_23,; TRANSPOSE; 1; 2
+transformer_blocks_4_attention_linear_layers_2; add_7,; view_18,; LINEAR; 256; 10; 1
+view_18; transformer_blocks_4_attention_linear_layers_2,; transpose_22,; VIEW; 1; -1; 8; 32
+transpose_22; view_18,; matmul_9,; TRANSPOSE; 1; 2
+transpose_23; transpose_21,; matmul_8,; TRANSPOSE; -2; -1
+matmul_8; transpose_20,transpose_23,; truediv_4,; BATCH_MATMUL
+truediv_4; matmul_8,; softmax_4,; SCALAR_TRUEDIV; 5.656854249492381
+softmax_4; truediv_4,; matmul_9,; SOFTMAX
+matmul_9; softmax_4,transpose_22,; transpose_24,; BATCH_MATMUL
+transpose_24; matmul_9,; contiguous_4,; TRANSPOSE; 1; 2
+contiguous_4; transpose_24,; view_19,; CONTIGUOUS
+view_19; contiguous_4,; transformer_blocks_4_attention_output_linear,; VIEW; 1; -1; 256
+transformer_blocks_4_attention_output_linear; view_19,; add_8,; LINEAR; 256; 10; 1
+add_8; add_7,transformer_blocks_4_attention_output_linear,; transformer_blocks_4_feed_forward_w_1,add_9,; ADD
+transformer_blocks_4_feed_forward_w_1; add_8,; transformer_blocks_4_feed_forward_activation,; LINEAR; 1024; 10; 1
+transformer_blocks_4_feed_forward_activation; transformer_blocks_4_feed_forward_w_1,; transformer_blocks_4_feed_forward_w_2,; RELU
+transformer_blocks_4_feed_forward_w_2; transformer_blocks_4_feed_forward_activation,; add_9,; LINEAR; 256; 10; 1
+add_9; add_8,transformer_blocks_4_feed_forward_w_2,; transformer_blocks_5_attention_linear_layers_0,transformer_blocks_5_attention_linear_layers_1,transformer_blocks_5_attention_linear_layers_2,add_10,; ADD
+transformer_blocks_5_attention_linear_layers_0; add_9,; view_20,; LINEAR; 256; 10; 1
+view_20; transformer_blocks_5_attention_linear_layers_0,; transpose_25,; VIEW; 1; -1; 8; 32
+transpose_25; view_20,; matmul_10,; TRANSPOSE; 1; 2
+transformer_blocks_5_attention_linear_layers_1; add_9,; view_21,; LINEAR; 256; 10; 1
+view_21; transformer_blocks_5_attention_linear_layers_1,; transpose_26,; VIEW; 1; -1; 8; 32
+transpose_26; view_21,; transpose_28,; TRANSPOSE; 1; 2
+transformer_blocks_5_attention_linear_layers_2; add_9,; view_22,; LINEAR; 256; 10; 1
+view_22; transformer_blocks_5_attention_linear_layers_2,; transpose_27,; VIEW; 1; -1; 8; 32
+transpose_27; view_22,; matmul_11,; TRANSPOSE; 1; 2
+transpose_28; transpose_26,; matmul_10,; TRANSPOSE; -2; -1
+matmul_10; transpose_25,transpose_28,; truediv_5,; BATCH_MATMUL
+truediv_5; matmul_10,; softmax_5,; SCALAR_TRUEDIV; 5.656854249492381
+softmax_5; truediv_5,; matmul_11,; SOFTMAX
+matmul_11; softmax_5,transpose_27,; transpose_29,; BATCH_MATMUL
+transpose_29; matmul_11,; contiguous_5,; TRANSPOSE; 1; 2
+contiguous_5; transpose_29,; view_23,; CONTIGUOUS
+view_23; contiguous_5,; transformer_blocks_5_attention_output_linear,; VIEW; 1; -1; 256
+transformer_blocks_5_attention_output_linear; view_23,; add_10,; LINEAR; 256; 10; 1
+add_10; add_9,transformer_blocks_5_attention_output_linear,; transformer_blocks_5_feed_forward_w_1,add_11,; ADD
+transformer_blocks_5_feed_forward_w_1; add_10,; transformer_blocks_5_feed_forward_activation,; LINEAR; 1024; 10; 1
+transformer_blocks_5_feed_forward_activation; transformer_blocks_5_feed_forward_w_1,; transformer_blocks_5_feed_forward_w_2,; RELU
+transformer_blocks_5_feed_forward_w_2; transformer_blocks_5_feed_forward_activation,; add_11,; LINEAR; 256; 10; 1
+add_11; add_10,transformer_blocks_5_feed_forward_w_2,; transformer_blocks_6_attention_linear_layers_0,transformer_blocks_6_attention_linear_layers_1,transformer_blocks_6_attention_linear_layers_2,add_12,; ADD
+transformer_blocks_6_attention_linear_layers_0; add_11,; view_24,; LINEAR; 256; 10; 1
+view_24; transformer_blocks_6_attention_linear_layers_0,; transpose_30,; VIEW; 1; -1; 8; 32
+transpose_30; view_24,; matmul_12,; TRANSPOSE; 1; 2
+transformer_blocks_6_attention_linear_layers_1; add_11,; view_25,; LINEAR; 256; 10; 1
+view_25; transformer_blocks_6_attention_linear_layers_1,; transpose_31,; VIEW; 1; -1; 8; 32
+transpose_31; view_25,; transpose_33,; TRANSPOSE; 1; 2
+transformer_blocks_6_attention_linear_layers_2; add_11,; view_26,; LINEAR; 256; 10; 1
+view_26; transformer_blocks_6_attention_linear_layers_2,; transpose_32,; VIEW; 1; -1; 8; 32
+transpose_32; view_26,; matmul_13,; TRANSPOSE; 1; 2
+transpose_33; transpose_31,; matmul_12,; TRANSPOSE; -2; -1
+matmul_12; transpose_30,transpose_33,; truediv_6,; BATCH_MATMUL
+truediv_6; matmul_12,; softmax_6,; SCALAR_TRUEDIV; 5.656854249492381
+softmax_6; truediv_6,; matmul_13,; SOFTMAX
+matmul_13; softmax_6,transpose_32,; transpose_34,; BATCH_MATMUL
+transpose_34; matmul_13,; contiguous_6,; TRANSPOSE; 1; 2
+contiguous_6; transpose_34,; view_27,; CONTIGUOUS
+view_27; contiguous_6,; transformer_blocks_6_attention_output_linear,; VIEW; 1; -1; 256
+transformer_blocks_6_attention_output_linear; view_27,; add_12,; LINEAR; 256; 10; 1
+add_12; add_11,transformer_blocks_6_attention_output_linear,; transformer_blocks_6_feed_forward_w_1,add_13,; ADD
+transformer_blocks_6_feed_forward_w_1; add_12,; transformer_blocks_6_feed_forward_activation,; LINEAR; 1024; 10; 1
+transformer_blocks_6_feed_forward_activation; transformer_blocks_6_feed_forward_w_1,; transformer_blocks_6_feed_forward_w_2,; RELU
+transformer_blocks_6_feed_forward_w_2; transformer_blocks_6_feed_forward_activation,; add_13,; LINEAR; 256; 10; 1
+add_13; add_12,transformer_blocks_6_feed_forward_w_2,; transformer_blocks_7_attention_linear_layers_0,transformer_blocks_7_attention_linear_layers_1,transformer_blocks_7_attention_linear_layers_2,add_14,; ADD
+transformer_blocks_7_attention_linear_layers_0; add_13,; view_28,; LINEAR; 256; 10; 1
+view_28; transformer_blocks_7_attention_linear_layers_0,; transpose_35,; VIEW; 1; -1; 8; 32
+transpose_35; view_28,; matmul_14,; TRANSPOSE; 1; 2
+transformer_blocks_7_attention_linear_layers_1; add_13,; view_29,; LINEAR; 256; 10; 1
+view_29; transformer_blocks_7_attention_linear_layers_1,; transpose_36,; VIEW; 1; -1; 8; 32
+transpose_36; view_29,; transpose_38,; TRANSPOSE; 1; 2
+transformer_blocks_7_attention_linear_layers_2; add_13,; view_30,; LINEAR; 256; 10; 1
+view_30; transformer_blocks_7_attention_linear_layers_2,; transpose_37,; VIEW; 1; -1; 8; 32
+transpose_37; view_30,; matmul_15,; TRANSPOSE; 1; 2
+transpose_38; transpose_36,; matmul_14,; TRANSPOSE; -2; -1
+matmul_14; transpose_35,transpose_38,; truediv_7,; BATCH_MATMUL
+truediv_7; matmul_14,; softmax_7,; SCALAR_TRUEDIV; 5.656854249492381
+softmax_7; truediv_7,; matmul_15,; SOFTMAX
+matmul_15; softmax_7,transpose_37,; transpose_39,; BATCH_MATMUL
+transpose_39; matmul_15,; contiguous_7,; TRANSPOSE; 1; 2
+contiguous_7; transpose_39,; view_31,; CONTIGUOUS
+view_31; contiguous_7,; transformer_blocks_7_attention_output_linear,; VIEW; 1; -1; 256
+transformer_blocks_7_attention_output_linear; view_31,; add_14,; LINEAR; 256; 10; 1
+add_14; add_13,transformer_blocks_7_attention_output_linear,; transformer_blocks_7_feed_forward_w_1,add_15,; ADD
+transformer_blocks_7_feed_forward_w_1; add_14,; transformer_blocks_7_feed_forward_activation,; LINEAR; 1024; 10; 1
+transformer_blocks_7_feed_forward_activation; transformer_blocks_7_feed_forward_w_1,; transformer_blocks_7_feed_forward_w_2,; RELU
+transformer_blocks_7_feed_forward_w_2; transformer_blocks_7_feed_forward_activation,; add_15,; LINEAR; 256; 10; 1
+add_15; add_14,transformer_blocks_7_feed_forward_w_2,; output,; ADD
+output; add_15,; ; OUTPUT
