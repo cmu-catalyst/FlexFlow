@@ -6,7 +6,8 @@
 namespace FlexFlow {
 
 size_t Op::get_untyped_params_hash() const {
-  size_t hash = this->get_params_hash();
+  /// @warning By making it random value, we don't use cash for simulated cost.
+  size_t hash = rand();//this->get_params_hash();
   hash_combine(hash, this->op_type);
   return hash;
 }
