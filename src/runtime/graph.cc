@@ -1591,9 +1591,20 @@ GraphOptimalViewSerialized
     for (const FlexFlow::Op* dstOp : model->operators) {
       std::string id = std::to_string(dstOp->op_guid);
       CostMetrics cost_metric = simulator->measure_operator_cost(dstOp, model->all_valid_views[0]);
+
+//      /// @warning If Op is Transpose, we skip measurement since we can't for now.
+//      if (std::string(dstOp->name).find("transpose") != std::string::npos) {
+//        cost_metric.forward_time = cost_metric.backward_time = 0;
+//      } else {
+//         cost_metric = simulator->measure_operator_cost(dstOp, model->all_valid_views[0]);
+//      }
+
+      std::cout << dstOp->name << std::endl;
+
       if (!flag) {
         g_json[id] = json();
         g_json[id]["inputs"] = json::array();
+        g_json[id]["name"] = dstOp->name;
         g_json[id]["input_size"] = json::array();
         for (int j = 0; j < dstOp->numInputs; j++) {
           const FlexFlow::Op* srcOp = dstOp->inputs[j]->owner_op;
