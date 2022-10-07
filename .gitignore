@@ -156,3 +156,8 @@ cython_debug/
 
 # IDE
 .vscode/*
+cmake-build-debug
+.idea
+
+# MAC
+.DS_Store
