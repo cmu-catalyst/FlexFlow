@@ -148,17 +148,19 @@ Tensor create_image_encoder(FFModel *model,
 
 CLIPConfig::CLIPConfig(void) {
   // Text Transformer arguments
-  // hidden_size = embed_dim (for multi-head attention) = transformer_width
+  // We assume hidden_size = embed_dim for convenience
+  // hidden_size (for multi-head attention) = transformer_width
+  // @warning FF runtime fails to run 768 (hidden size) and 12 (# of heads)
   tt_hidden_size = 512; // 512 or 768 (errors out when measuring op cost)
-  tt_num_heads = 12; // 8 or 12
+  tt_num_heads = 8; // 8 or 12
   tt_num_layers = 12; // 12
 
-  sequence_length = 512; // 512 or 1024
+  sequence_length = 76; // 76
 
   // Vision Transformer arguments
-  vt_hidden_size = 512; // 768 or 1024
-  vt_num_heads = 12; // 12 or 16
-  vt_num_layers = 12; // 12 or 24
+  vt_hidden_size = 1024; // 768 or 1024
+  vt_num_heads = 16; // 12 or 16
+  vt_num_layers = 24; // 12 or 24
 
   // Vision Transformer conv arguments
   // Candidates: ViT-B/32, ViT-B/16, ViT-L/14, ViT-L/14-336px
@@ -229,19 +231,6 @@ void FlexFlow::top_level_task(Task const *task,
 
   /// Normalize feature
 
-  /// Cosine similarity (Matmul between image and text features)
-  /// FIXME: Replace with bmm instead of add
-//  for (int i=0; i<5; ++i) {
-//    std::cout << tt->dims[i] << ",";
-//  }
-//  std::cout << std::endl;
-//
-//  for (int i=0; i<5; ++i) {
-//    std::cout << vt->dims[i] << ",";
-//  }
-//  std::cout << std::endl;
-
-
   /// FIXME: check if the shape is correct here
 //  std::vector<int> vt_shape{1, vt->adim[0], vt->adim[1]};
 //  vt = ff.reshape(vt, vt_shape);
@@ -252,6 +241,24 @@ void FlexFlow::top_level_task(Task const *task,
 //  std::vector<int> tt_shape{1, tt->adim[0], tt->adim[1]};
 //  tt = ff.reshape(tt, tt_shape);
 //
+
+  /// FIXME: Temporary operator to enable mismatch of tt and vt
+  std::vector<int> tt_shape{ffConfig.batchSize, vt->dims[0], 38};
+  tt = ff.reshape(tt, tt_shape);
+
+  /// Cosine similarity (Matmul between image and text features)
+  /// FIXME: Replace with bmm instead of add
+  for (int i=0; i<5; ++i) {
+    std::cout << tt->dims[i] << ",";
+  }
+  std::cout << std::endl;
+
+  for (int i=0; i<5; ++i) {
+    std::cout << vt->dims[i] << ",";
+  }
+  std::cout << std::endl;
+
+
   Tensor ot = ff.batch_matmul(vt, tt);
 
 //  std::cout << "output tensor : ";
