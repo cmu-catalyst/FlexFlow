@@ -30,6 +30,9 @@ Tensor create_residual_attention_block(FFModel *model,
   /// LayerNorm
 
   /// Multi-head attention
+  /// @warning It requires the input shape to be (N, L, D)
+  /// where N: batch size, L: seq length, H: width of Transformer
+  /// Note that it's different from PyTorch default (L, N, D)
   Tensor t = model->multihead_attention(
       input, input, input, hidden_size, num_heads, kv_dim, kv_dim);
 
@@ -66,15 +69,8 @@ Tensor create_text_encoder(FFModel *model,
 
   /// Add positional embedding to token embeddings
 
-  /// permutation
-  std::vector<int> perm2{1, 0, 2};
-  t = model->transpose(t, perm2);
-
   /// Transformer
   t = create_transformer(model, t, hidden_size, num_heads, kv_dim, num_layers);
-
-  /// permutation
-  t = model->transpose(t, perm2);
 
   /// Layernorm
 
@@ -124,10 +120,6 @@ Tensor create_image_encoder(FFModel *model,
   /// Add positional embedding
   /// LayerNorm
 
-  /// Permute
-  std::vector<int> perm2{1, 0, 2};
-  t = model->transpose(t, perm2);
-
   /// Transformer
   t = create_transformer(model,
                          t,
@@ -135,9 +127,6 @@ Tensor create_image_encoder(FFModel *model,
                          num_heads,
                          kv_dim,
                          num_layers);
-
-  /// Permute
-  t = model->transpose(t, perm2);
 
   /// LayerNorm
 
@@ -150,7 +139,8 @@ CLIPConfig::CLIPConfig(void) {
   // Text Transformer arguments
   // We assume hidden_size = embed_dim for convenience
   // hidden_size (for multi-head attention) = transformer_width
-  // @warning FF runtime fails to run 768 (hidden size) and 12 (# of heads)
+  /// @warning FF runtime fails to run 768 (hidden size) and 12 (# of heads)
+  /// CU: cuEventSynchronize(e) = 700 (CUDA_ERROR_ILLEGAL_ADDRESS): an illegal memory access was encountered
   tt_hidden_size = 512; // 512 or 768 (errors out when measuring op cost)
   tt_num_heads = 8; // 8 or 12
   tt_num_layers = 12; // 12
@@ -167,6 +157,8 @@ CLIPConfig::CLIPConfig(void) {
   // B and L means "Base" and "Large", /32 means input patch size = 32x32
 
   // out_channels = vt_hidden_size
+  /// @warning FF runtime fails to run 336 (image size) and 14 (kernel size)
+  /// CU: cuEventSynchronize(e) = 700 (CUDA_ERROR_ILLEGAL_ADDRESS): an illegal memory access was encountered
   in_channels = 3;
   image_size = 224; // 224 or 336
   // stride = kernel_size --> Image is kxk words
@@ -191,6 +183,12 @@ void FlexFlow::top_level_task(Task const *task,
         ffConfig.batchSize, tfConfig.sequence_length, tfConfig.tt_hidden_size};
     text_input = ff.create_tensor<3>(dims, DT_FLOAT);
   }
+
+//  std::cout << "Text Input shape : ";
+//  for (int i=0; i<5; ++i) {
+//    std::cout << text_input->dims[i] << ",";
+//  }
+//  std::cout << std::endl;
 
   /// Image Input - Assume ImageNet dataset (resampled to size 256x256 or 224x224)
   Tensor visual_input; // NCHW
@@ -242,23 +240,27 @@ void FlexFlow::top_level_task(Task const *task,
 //  tt = ff.reshape(tt, tt_shape);
 //
 
-  /// FIXME: Temporary operator to enable mismatch of tt and vt
+  /// FIXME: Temporary operator to fix mismatch of tt and vt
   std::vector<int> tt_shape{ffConfig.batchSize, vt->dims[0], 38};
   tt = ff.reshape(tt, tt_shape);
 
   /// Cosine similarity (Matmul between image and text features)
-  /// FIXME: Replace with bmm instead of add
+  std::cout << "Final TE shape : ";
   for (int i=0; i<5; ++i) {
     std::cout << tt->dims[i] << ",";
   }
   std::cout << std::endl;
 
+  std::cout << "Final VE shape : ";
   for (int i=0; i<5; ++i) {
     std::cout << vt->dims[i] << ",";
   }
   std::cout << std::endl;
 
-
+  /// FIXME: Later, we need to think about how to consider matrix of
+  /// (batch_size, batch_size) with our pipeline scheme instead of
+  /// (micro_batch_size, micro_batch_size) * (batch_size/micro_batch_size).
+  /// Currently, we are missing out (batch_size - micro_batch_size) * batch_size pairs
   Tensor ot = ff.batch_matmul(vt, tt);
 
 //  std::cout << "output tensor : ";
@@ -273,7 +275,10 @@ void FlexFlow::top_level_task(Task const *task,
   std::vector<MetricsType> metrics;
   // metrics.push_back(METRICS_ACCURACY);
 //   metrics.push_back(METRICS_MEAN_SQUARED_ERROR);
+
+  /// @warning: Code exits when we compile the model if we turn on op profiling
   ff.compile(optimizer, LOSS_MEAN_SQUARED_ERROR_AVG_REDUCE, metrics);
+
 
 //  std::cout << "Code reaches here after compilation" << std::endl;
 
