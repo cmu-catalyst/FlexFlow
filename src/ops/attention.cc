@@ -773,6 +773,7 @@ bool MultiHeadAttention::measure_operator_cost(
 
   // allocate tensors in simulator
   sim->free_all();
+  cost_metrics.reserved_memory += m->reserveSpaceSize;
   float const *query_ptr =
       (float const *)sim->allocate(sub_query.get_volume(), DT_FLOAT);
   float const *key_ptr =
