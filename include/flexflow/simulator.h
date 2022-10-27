@@ -76,7 +76,7 @@ public:
   // 1. all memory allocations use Simulator::allocate
   // 2. we call Simulator::free_all before measuring an operator
   // Therefore, the current memory usage of an operator is (size_t)sim->offset
-  size_t inputs_memory, outputs_memory, weights_memory;
+  size_t inputs_memory, outputs_memory, weights_memory, reserved_memory = 0;
 };
 
 class Device {

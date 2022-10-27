@@ -1627,6 +1627,10 @@ GraphOptimalViewSerialized
         g_json[id]["runtime"] = json();
       }
       g_json[id]["runtime"][bs] = cost_metric.forward_time + cost_metric.backward_time;
+      if (cost_metric.reserved_memory == 0)
+        g_json[id]["reserved_mem"][bs] = 0;
+      else
+        g_json[id]["reserved_mem"][bs] = cost_metric.reserved_memory + sizeof(int) * model->config.batchSize * 2;
     }
     {
       std::ofstream json_file(filename);
