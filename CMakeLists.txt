@@ -217,6 +217,7 @@ option(FF_BUILD_XDL "build XDL example" OFF)
 option(FF_BUILD_INCEPTION "build inception example" OFF)
 option(FF_BUILD_CANDLE_UNO "build candle uno example" OFF)
 option(FF_BUILD_TRANSFORMER "build transformer example" OFF)
+option(FF_BUILD_CLIP "build clip example" OFF)
 option(FF_BUILD_MLP_UNIFY "build mlp unify example" OFF)
 option(FF_BUILD_SPLIT_TEST "build split test example" OFF)
 option(FF_BUILD_SPLIT_TEST_2 "build split test 2 example" OFF)
@@ -299,6 +300,10 @@ endif()
 
 if(FF_BUILD_TRANSFORMER OR FF_BUILD_ALL_EXAMPLES)
   add_subdirectory(examples/cpp/Transformer)
+endif()
+
+if(FF_BUILD_CLIP OR FF_BUILD_ALL_EXAMPLES)
+  add_subdirectory(examples/cpp/CLIP)
 endif()
 
 # installation
