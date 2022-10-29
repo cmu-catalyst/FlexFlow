@@ -22,16 +22,16 @@ BUILD_TYPE=Release
 #FF_CUDA_ARCH=xx
 
 # set CUDNN dir in case cmake cannot autodetect a path
-CUDNN_DIR=/usr/local/cuda
+CUDNN_DIR=/usr/local/cuda-11.7
 
 # set CUDA dir in case cmake cannot autodetect a path
-CUDA_DIR=/usr/local/cuda
+CUDA_DIR=/usr/local/cuda-11.7
 
 # enable Python
-FF_USE_PYTHON=ON
+FF_USE_PYTHON=OFF
 
 # enable NCCL
-FF_USE_NCCL=OFF
+FF_USE_NCCL=ON
 
 # enable GASNet
 FF_USE_GASNET=OFF

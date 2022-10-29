@@ -279,6 +279,10 @@ if(FF_BUILD_CANDLE_UNO OR FF_BUILD_ALL_EXAMPLES)
   add_subdirectory(examples/cpp/candle_uno)
 endif()
 
+if(FF_BUILD_ALL_EXAMPLES)
+	add_subdirectory(examples/cpp/CLIP)
+endif()
+
 if(FF_BUILD_DLRM OR FF_BUILD_ALL_EXAMPLES)
   add_subdirectory(examples/cpp/DLRM)
 
