@@ -1,0 +1,12 @@
+CUDA_VISIBLE_DEVICES=1 ./synthetic_n_branches -ll:gpu 1 -ll:fsize 6000 -ll:zsize 8000 -b 1
+#CUDA_VISIBLE_DEVICES=1 ./synthetic_n_branches -ll:gpu 1 -ll:fsize 6000 -ll:zsize 8000 -b 2
+#CUDA_VISIBLE_DEVICES=1 ./synthetic_n_branches -ll:gpu 1 -ll:fsize 6000 -ll:zsize 8000 -b 4
+#CUDA_VISIBLE_DEVICES=1 ./synthetic_n_branches -ll:gpu 1 -ll:fsize 6000 -ll:zsize 8000 -b 8
+#CUDA_VISIBLE_DEVICES=1 ./synthetic_n_branches -ll:gpu 1 -ll:fsize 6000 -ll:zsize 8000 -b 16
+#CUDA_VISIBLE_DEVICES=1 ./synthetic_n_branches -ll:gpu 1 -ll:fsize 6000 -ll:zsize 8000 -b 32
+#CUDA_VISIBLE_DEVICES=1 ./synthetic_n_branches -ll:gpu 1 -ll:fsize 6000 -ll:zsize 8000 -b 64
+#CUDA_VISIBLE_DEVICES=1 ./synthetic_n_branches -ll:gpu 1 -ll:fsize 6000 -ll:zsize 8000 -b 128
+#CUDA_VISIBLE_DEVICES=1 ./synthetic_n_branches -ll:gpu 1 -ll:fsize 6000 -ll:zsize 8000 -b 256
+#CUDA_VISIBLE_DEVICES=1 ./synthetic_n_branches -ll:gpu 1 -ll:fsize 6000 -ll:zsize 8000 -b 512
+#CUDA_VISIBLE_DEVICES=1 ./synthetic_n_branches -ll:gpu 1 -ll:fsize 6000 -ll:zsize 8000 -b 1024
+#CUDA_VISIBLE_DEVICES=1 ./synthetic_n_branches -ll:gpu 1 -ll:fsize 6000 -ll:zsize 8000 -b 2048

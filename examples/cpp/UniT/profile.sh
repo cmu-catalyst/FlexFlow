@@ -1,0 +1,12 @@
+CUDA_VISIBLE_DEVICES=1 ./unit -ll:gpu 1 -ll:fsize 6000 -ll:zsize 8000 -b 1 --simulator-workspace-size 3000000000
+#CUDA_VISIBLE_DEVICES=1 ./unit -ll:gpu 1 -ll:fsize 6000 -ll:zsize 8000 -b 2 --simulator-workspace-size 4000000000
+#CUDA_VISIBLE_DEVICES=1 ./unit -ll:gpu 1 -ll:fsize 6000 -ll:zsize 8000 -b 4 --simulator-workspace-size 4000000000
+#CUDA_VISIBLE_DEVICES=1 ./unit -ll:gpu 1 -ll:fsize 6000 -ll:zsize 8000 -b 8 --simulator-workspace-size 4000000000
+#CUDA_VISIBLE_DEVICES=1 ./unit -ll:gpu 1 -ll:fsize 6000 -ll:zsize 8000 -b 16 --simulator-workspace-size 4000000000
+#CUDA_VISIBLE_DEVICES=1 ./unit -ll:gpu 1 -ll:fsize 6000 -ll:zsize 8000 -b 32 --simulator-workspace-size 4000000000
+#CUDA_VISIBLE_DEVICES=1 ./unit -ll:gpu 1 -ll:fsize 6000 -ll:zsize 8000 -b 64 --simulator-workspace-size 4000000000
+#CUDA_VISIBLE_DEVICES=1 ./unit -ll:gpu 1 -ll:fsize 6000 -ll:zsize 8000 -b 128 --simulator-workspace-size 4000000000
+#CUDA_VISIBLE_DEVICES=1 ./unit -ll:gpu 1 -ll:fsize 6000 -ll:zsize 8000 -b 256 --simulator-workspace-size 4000000000
+#CUDA_VISIBLE_DEVICES=1 ./unit -ll:gpu 1 -ll:fsize 6000 -ll:zsize 8000 -b 512 --simulator-workspace-size 4000000000
+#CUDA_VISIBLE_DEVICES=1 ./unit -ll:gpu 1 -ll:fsize 6000 -ll:zsize 8000 -b 1024 --simulator-workspace-size 4000000000
+#CUDA_VISIBLE_DEVICES=1 ./unit -ll:gpu 1 -ll:fsize 6000 -ll:zsize 8000 -b 2048 --simulator-workspace-size 4000000000
