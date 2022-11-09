@@ -156,7 +156,7 @@ Tensor create_image_encoder(FFModel *model,
   std::cout << std::endl;
 
   /// Self type-inference for reshape: shape = [*, grid ** 2, width]
-  std::vector<int> shape{batch_size, 2048, 12*12};
+  std::vector<int> shape{t->dims[3], t->dims[2], t->dims[0]*t->dims[1]};
   t = model->reshape(t, shape);
   std::vector<int> perm1{0, 2, 1};
   t = model->transpose(t, perm1);
@@ -190,10 +190,10 @@ UniTConfig::UniTConfig(void) {
   tt_num_heads = 12; // 12
   tt_num_layers = 12; // 12
 
-  sequence_length = 128; // 128, 256, 512 vary depending on tasks
+  sequence_length = 512; // 128, 256, 512 vary depending on tasks
 
   // Vision Transformer arguments
-  vt_hidden_size = 256; // 256
+  vt_hidden_size = 768; // 256, 768
   vt_num_heads = 8; // 8
   vt_num_layers = 6; // 6
 
@@ -210,7 +210,7 @@ UniTConfig::UniTConfig(void) {
   /// @warning FF runtime fails to run 336 (image size) and 14 (kernel size)
   /// CU: cuEventSynchronize(e) = 700 (CUDA_ERROR_ILLEGAL_ADDRESS): an illegal memory access was encountered
   in_channels = 3;
-  image_size = 384; // random sampling btw 384 - 600
+  image_size = 600; // random sampling btw 384 - 600
   // stride = kernel_size --> Image is kxk words
   kernel_size = 99999; // Doesn't matter
   padding = 0;

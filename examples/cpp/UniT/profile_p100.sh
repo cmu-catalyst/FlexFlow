@@ -1,0 +1,11 @@
+CUDA_VISIBLE_DEVICES=1 ./unit -ll:gpu 1 -ll:fsize 14000 -ll:zsize 10000 -b 1
+CUDA_VISIBLE_DEVICES=1 ./unit -ll:gpu 1 -ll:fsize 14000 -ll:zsize 10000 -b 2
+CUDA_VISIBLE_DEVICES=1 ./unit -ll:gpu 1 -ll:fsize 14000 -ll:zsize 10000 -b 4
+CUDA_VISIBLE_DEVICES=1 ./unit -ll:gpu 1 -ll:fsize 14000 -ll:zsize 10000 -b 8
+CUDA_VISIBLE_DEVICES=1 ./unit -ll:gpu 1 -ll:fsize 14000 -ll:zsize 10000 -b 16
+CUDA_VISIBLE_DEVICES=1 ./unit -ll:gpu 1 -ll:fsize 14000 -ll:zsize 10000 -b 32
+CUDA_VISIBLE_DEVICES=1 ./unit -ll:gpu 1 -ll:fsize 14000 -ll:zsize 10000 -b 64
+CUDA_VISIBLE_DEVICES=1 ./unit -ll:gpu 1 -ll:fsize 14000 -ll:zsize 10000 -b 128
+CUDA_VISIBLE_DEVICES=1 ./unit -ll:gpu 1 -ll:fsize 14000 -ll:zsize 10000 -b 256
+CUDA_VISIBLE_DEVICES=1 ./unit -ll:gpu 1 -ll:fsize 14000 -ll:zsize 10000 -b 512
+CUDA_VISIBLE_DEVICES=1 ./unit -ll:gpu 1 -ll:fsize 14000 -ll:zsize 10000 -b 1024
