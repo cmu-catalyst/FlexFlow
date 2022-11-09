@@ -282,7 +282,7 @@ if(FF_BUILD_CANDLE_UNO OR FF_BUILD_ALL_EXAMPLES)
   add_subdirectory(examples/cpp/candle_uno)
 endif()
 
-if(FF_BUILD_ALL_EXAMPLES)
+if(FF_BUILD_CLIP OR FF_BUILD_ALL_EXAMPLES)
 	add_subdirectory(examples/cpp/CLIP)
 endif()
 
@@ -302,10 +302,6 @@ endif()
 
 if(FF_BUILD_TRANSFORMER OR FF_BUILD_ALL_EXAMPLES)
   add_subdirectory(examples/cpp/Transformer)
-endif()
-
-if(FF_BUILD_CLIP OR FF_BUILD_ALL_EXAMPLES)
-  add_subdirectory(examples/cpp/CLIP)
 endif()
 
 if(FF_BUILD_UNIT OR FF_BUILD_ALL_EXAMPLES)
