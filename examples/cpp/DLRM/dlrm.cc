@@ -74,7 +74,7 @@ Tensor create_emb(FFModel *model,
   return model->embedding(input,
                           input_dim,
                           output_dim,
-                          AGGR_MODE_SUM,
+                          AGGR_MODE_NONE,
                           NULL /*weight_sharing*/,
                           embed_init);
 }
@@ -153,7 +153,10 @@ void FlexFlow::top_level_task(Task const *task,
   for (size_t i = 0; i < dlrmConfig.embedding_size.size(); i++) {
     int input_dim = dlrmConfig.embedding_size[i];
     int output_dim = dlrmConfig.sparse_feature_size;
-    ly.push_back(create_emb(&ff, sparse_inputs[i], input_dim, output_dim, i));
+    Tensor t = create_emb(&ff, sparse_inputs[i], input_dim, output_dim, i);
+    std::vector<int> new_shape{ffConfig.batchSize, 1, dlrmConfig.embedding_bag_size, dlrmConfig.sparse_feature_size};
+    t = ff.reshape(t, new_shape);
+    ly.push_back(ff.dense(ff.flat(t), output_dim, AC_MODE_RELU /*relu*/));
   }
   Tensor z = interact_features(&ff, x, ly, dlrmConfig.arch_interaction_op);
   Tensor p =
