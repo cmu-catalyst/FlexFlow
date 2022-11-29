@@ -141,8 +141,8 @@ CLIPConfig::CLIPConfig(void) {
   // hidden_size (for multi-head attention) = transformer_width
   /// @warning FF runtime fails to run 768 (hidden size) and 12 (# of heads)
   /// CU: cuEventSynchronize(e) = 700 (CUDA_ERROR_ILLEGAL_ADDRESS): an illegal memory access was encountered
-  tt_hidden_size = 512; // 512 or 768 (errors out when measuring op cost)
-  tt_num_heads = 8; // 8 or 12
+  tt_hidden_size = 768; // 512 or 768 (errors out when measuring op cost)
+  tt_num_heads = 12; // 8 or 12
   tt_num_layers = 12; // 12
 
   sequence_length = 76; // 76
@@ -241,7 +241,7 @@ void FlexFlow::top_level_task(Task const *task,
 //
 
   /// FIXME: Temporary operator to fix mismatch of tt and vt
-  std::vector<int> tt_shape{ffConfig.batchSize, vt->dims[0], 38};
+  std::vector<int> tt_shape{ffConfig.batchSize, vt->dims[0], tt->dims[0]*tt->dims[1]/vt->dims[0]};
   tt = ff.reshape(tt, tt_shape);
 
   /// Cosine similarity (Matmul between image and text features)
