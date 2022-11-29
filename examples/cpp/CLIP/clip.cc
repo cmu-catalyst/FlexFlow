@@ -160,9 +160,9 @@ CLIPConfig::CLIPConfig(void) {
   /// @warning FF runtime fails to run 336 (image size) and 14 (kernel size)
   /// CU: cuEventSynchronize(e) = 700 (CUDA_ERROR_ILLEGAL_ADDRESS): an illegal memory access was encountered
   in_channels = 3;
-  image_size = 224; // 224 or 336
+  image_size = 336; // 224 or 336
   // stride = kernel_size --> Image is kxk words
-  kernel_size = 16; // 32, 16, 14
+  kernel_size = 14; // 32, 16, 14
   padding = 0;
 }
 
