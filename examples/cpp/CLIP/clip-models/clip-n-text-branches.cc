@@ -88,13 +88,13 @@ CLIPConfig::CLIPConfig(void) {
   // We assume hidden_size = embed_dim for convenience
   // hidden_size (for multi-head attention) = transformer_width
   
-  tt_hidden_size = -1; // 512 or 768 (errors out when measuring op cost)
-  tt_num_heads = -1; // 8 or 12
-  tt_num_layers = -1; // 12
+  tt_hidden_size = 1024; // 512 or 768 (errors out when measuring op cost)
+  tt_num_heads = 16; // 8 or 12
+  tt_num_layers = 12; // 12
 
-  sequence_length = -1; // 76
+  sequence_length = 256; // 76
   
-  num_branches = -1;
+  num_branches = 4;
 }
 
 void FlexFlow::top_level_task(Task const *task,
@@ -135,7 +135,81 @@ void FlexFlow::top_level_task(Task const *task,
 
   /// @warning: Code exits when we compile the model if we turn on op profiling
   ff.compile(optimizer, LOSS_MEAN_SQUARED_ERROR_AVG_REDUCE, metrics);
+  exit(0);
 
+
+//  std::cout << "Code reaches here after compilation" << std::endl;
+  // Data Loader
+//   DataLoader loader(ff, tfConfig, text_input, visual_input, ff.label_tensor, ot);
+//   loader.next_batch(ff);
+//   loader.reset();
+  ff.init_operators();
+  ff.zero_weight_gradients();
+
+  for (int iter = 0; iter < 1; iter++) {
+    ff.reset_pipe_idx();
+    for (int iter_inner = 0; iter_inner < ff.iter_perbatch; iter_inner++) {
+      ff.forward();
+      ff.zero_input_gradients();
+      ff.backward();
+    }
+    ff.update();
+    ff.zero_weight_gradients();
+  }
+
+  for (int iter = 0; iter < 1; iter++) {
+      ff.reset_pipe_idx();
+      runtime->begin_trace(ctx, 111 /*trace_id*/);
+      for (int iter_inner = 0; iter_inner < ff.iter_perbatch; iter_inner++) {
+        ff.forward();
+        // ff.zero_input_gradients();
+        ff.backward();
+      }
+      ff.update();
+      ff.zero_weight_gradients();
+      runtime->end_trace(ctx, 111 /*trace_id*/);
+    }
+
+  // Start timer
+  {
+    runtime->issue_execution_fence(ctx);
+    TimingLauncher timer(MEASURE_MICRO_SECONDS);
+    Future future = runtime->issue_timing_measurement(ctx, timer);
+    future.get_void_result();
+  }
+  log_app.print("Warmup finished...Start timer...");
+  log_app.print("Num. epochs = %d", ffConfig.epochs);
+  log_app.print("Num. iterations/epoch = %d", 16);
+  printf("parameters.size() = %lu\n", ff.parameters.size());
+  double ts_start = Realm::Clock::current_time_in_microseconds();
+  for (int epoch = 0; epoch < ffConfig.epochs; epoch++) {
+    // ff.reset_metrics();
+    int iterations = 16;
+    for (int iter = 0; iter < iterations; iter++) {
+      ff.reset_pipe_idx();
+      runtime->begin_trace(ctx, 111 /*trace_id*/);
+      for (int iter_inner = 0; iter_inner < ff.iter_perbatch; iter_inner++) {
+        ff.forward();
+        // ff.zero_input_gradients();
+        ff.backward();
+      }
+      ff.update();
+      ff.zero_weight_gradients();
+      runtime->end_trace(ctx, 111 /*trace_id*/);
+    }
+  }
+  // End timer
+  {
+    runtime->issue_execution_fence(ctx);
+    TimingLauncher timer(MEASURE_MICRO_SECONDS);
+    Future future = runtime->issue_timing_measurement(ctx, timer);
+    future.get_void_result();
+  }
+  double ts_end = Realm::Clock::current_time_in_microseconds();
+  double run_time = 1e-6 * (ts_end - ts_start);
+  printf("ELAPSED TIME = %.4fs, THROUGHPUT = %.2f samples/s\n",
+         run_time,
+         16 * ffConfig.batchSize * ffConfig.epochs / run_time);
 }
 
 void parse_input_args(char **argv, int argc, CLIPConfig &config) {

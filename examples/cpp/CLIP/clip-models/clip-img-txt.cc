@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+// clip-img-txt.cc
 #include "clip.h"
 
 using namespace Legion;
@@ -141,16 +142,16 @@ CLIPConfig::CLIPConfig(void) {
   // hidden_size (for multi-head attention) = transformer_width
   /// @warning FF runtime fails to run 768 (hidden size) and 12 (# of heads)
   /// CU: cuEventSynchronize(e) = 700 (CUDA_ERROR_ILLEGAL_ADDRESS): an illegal memory access was encountered
-  tt_hidden_size = 512; // 512 or 768 (errors out when measuring op cost)
-  tt_num_heads = 8; // 8 or 12
+  tt_hidden_size = 2048; // 512 or 768 (errors out when measuring op cost)
+  tt_num_heads = 16; // 8 or 12
   tt_num_layers = 12; // 12
 
-  sequence_length = 256; // 76
+  sequence_length = 512; // 76
 
   // Vision Transformer arguments
-  vt_hidden_size = 1024; // 768 or 1024
+  vt_hidden_size = 2048; // 768 or 1024
   vt_num_heads = 16; // 12 or 16
-  vt_num_layers = 24; // 12 or 24
+  vt_num_layers = 12; // 12 or 24
 
   // Vision Transformer conv arguments
   // Candidates: ViT-B/32, ViT-B/16, ViT-L/14, ViT-L/14-336px
@@ -160,9 +161,9 @@ CLIPConfig::CLIPConfig(void) {
   /// @warning FF runtime fails to run 336 (image size) and 14 (kernel size)
   /// CU: cuEventSynchronize(e) = 700 (CUDA_ERROR_ILLEGAL_ADDRESS): an illegal memory access was encountered
   in_channels = 3;
-  image_size = 224; // 224 or 336
+  image_size = 336; // 224 or 336
   // stride = kernel_size --> Image is kxk words
-  kernel_size = 16; // 32, 16, 14
+  kernel_size = 14; // 32, 16, 14
   padding = 0;
 }
 
@@ -193,11 +194,9 @@ void FlexFlow::top_level_task(Task const *task,
   /// Image Input - Assume ImageNet dataset (resampled to size 256x256 or 224x224)
   Tensor visual_input; // NCHW
   {
-//    int const dims[] = {ffConfig.batchSize, tfConfig.in_channels,
-//                        tfConfig.image_size, tfConfig.image_size};
-    int const dims[] = {
-      ffConfig.batchSize, tfConfig.sequence_length, tfConfig.tt_hidden_size};
-    visual_input = ff.create_tensor<3>(dims, DT_FLOAT);
+    int const dims[] = {ffConfig.batchSize, tfConfig.in_channels,
+                        tfConfig.image_size, tfConfig.image_size};
+    visual_input = ff.create_tensor<4>(dims, DT_FLOAT);
   }
 
   /// Text encoder (Basically Transformer model)
@@ -212,12 +211,17 @@ void FlexFlow::top_level_task(Task const *task,
 
   /// Image encoder
   Tensor vt = visual_input; // Encoded vector for image
-  vt = create_text_encoder(&ff,
-                           vt,
-                           tfConfig.tt_hidden_size,
-                           tfConfig.tt_num_heads,
-                           tfConfig.tt_hidden_size / tfConfig.tt_num_heads,
-                           tfConfig.tt_num_layers);
+  vt = create_image_encoder(&ff,
+                            vt,
+                            tfConfig.kernel_size,
+                            tfConfig.kernel_size,
+                            tfConfig.padding,
+                            tfConfig.vt_hidden_size,
+                            tfConfig.vt_num_heads,
+                            tfConfig.vt_hidden_size / tfConfig.vt_num_heads,
+                            tfConfig.vt_num_layers,
+                            ffConfig.batchSize,
+                            tfConfig.image_size);
 
   /// Calculate cosine similarity of images and text
 
@@ -238,7 +242,7 @@ void FlexFlow::top_level_task(Task const *task,
 //
 
   /// FIXME: Temporary operator to fix mismatch of tt and vt
-  std::vector<int> tt_shape{ffConfig.batchSize, vt->dims[0], vt->dims[1]};
+  std::vector<int> tt_shape{ffConfig.batchSize, vt->dims[0], tt->dims[0]*tt->dims[1]/vt->dims[0]};
   tt = ff.reshape(tt, tt_shape);
 
   /// Cosine similarity (Matmul between image and text features)

@@ -27,10 +27,14 @@ void parse_input_args(char **argv, int argc, CandleConfig &apConfig);
 
 CandleConfig::CandleConfig(void) {
   // Set default configurations here
-  for (int i = 0; i < 8; i++)
-    dense_layers.push_back(4192);
-  for (int i = 0; i < 16; i++)
-    dense_feature_layers.push_back(4192);
+  // for (int i = 0; i < 8; i++)
+  //   dense_layers.push_back(4192);
+  // for (int i = 0; i < 16; i++)
+  //   dense_feature_layers.push_back(4192);
+  for (int i = 0; i < 2; i++)
+    dense_layers.push_back(4096);
+  for (int i = 0; i < 4; i++)
+    dense_feature_layers.push_back(4096);  
   feature_shapes["dose"] = 1;
   feature_shapes["cell.rnaseq"] = 942;
   feature_shapes["drug.descriptors"] = 5270;
@@ -136,46 +140,47 @@ void FlexFlow::top_level_task(Task const *task,
   // metrics.push_back(METRICS_ACCURACY);
   metrics.push_back(METRICS_MEAN_SQUARED_ERROR);
   ff.compile(optimizer, LOSS_MEAN_SQUARED_ERROR_AVG_REDUCE, metrics);
-  // Data Loader
-  DataLoader data_loader(ff, candle_config, all_inputs, ff.label_tensor);
-  data_loader.next_batch(ff);
-  data_loader.reset();
-  ff.init_operators();
+  
+  // // Data Loader
+  // DataLoader data_loader(ff, candle_config, all_inputs, ff.label_tensor);
+  // data_loader.next_batch(ff);
+  // data_loader.reset();
+  // ff.init_operators();
 
-  log_app.print("Warmup finished...Start timer...");
-  log_app.print("Num. epochs = %d", ff_config.epochs);
-  log_app.print("Num. iterations/epoch = %d",
-                data_loader.num_samples / ff_config.batchSize);
-  double ts_start = Realm::Clock::current_time_in_microseconds();
-  for (int epoch = 0; epoch < ff_config.epochs; epoch++) {
-    data_loader.reset();
-    ff.reset_metrics();
-    int iterations = data_loader.num_samples / ff_config.batchSize;
-    for (int iter = 0; iter < iterations; iter++) {
-      if (candle_config.dataset_path.length() == 0) {
-        // Only load data once for random input
-        if (iter == 0 && epoch == 0)
-          data_loader.next_batch(ff);
-      } else {
-        data_loader.next_batch(ff);
-      }
-      runtime->begin_trace(ctx, 111 /*trace_id*/);
-      ff.forward();
-      ff.zero_gradients();
-      ff.backward();
-      ff.update();
-      runtime->end_trace(ctx, 111 /*trace_id*/);
-    }
-  }
-  runtime->issue_execution_fence(ctx);
-  TimingLauncher timer(MEASURE_MICRO_SECONDS);
-  Future future = runtime->issue_timing_measurement(ctx, timer);
-  future.get_void_result();
-  double ts_end = Realm::Clock::current_time_in_microseconds();
-  double run_time = 1e-6 * (ts_end - ts_start);
-  printf("ELAPSED TIME = %.4fs, THROUGHPUT = %.2f samples/s\n",
-         run_time,
-         data_loader.num_samples * ff_config.epochs / run_time);
+  // log_app.print("Warmup finished...Start timer...");
+  // log_app.print("Num. epochs = %d", ff_config.epochs);
+  // log_app.print("Num. iterations/epoch = %d",
+  //               data_loader.num_samples / ff_config.batchSize);
+  // double ts_start = Realm::Clock::current_time_in_microseconds();
+  // for (int epoch = 0; epoch < ff_config.epochs; epoch++) {
+  //   data_loader.reset();
+  //   ff.reset_metrics();
+  //   int iterations = data_loader.num_samples / ff_config.batchSize;
+  //   for (int iter = 0; iter < iterations; iter++) {
+  //     if (candle_config.dataset_path.length() == 0) {
+  //       // Only load data once for random input
+  //       if (iter == 0 && epoch == 0)
+  //         data_loader.next_batch(ff);
+  //     } else {
+  //       data_loader.next_batch(ff);
+  //     }
+  //     runtime->begin_trace(ctx, 111 /*trace_id*/);
+  //     ff.forward();
+  //     ff.zero_gradients();
+  //     ff.backward();
+  //     ff.update();
+  //     runtime->end_trace(ctx, 111 /*trace_id*/);
+  //   }
+  // }
+  // runtime->issue_execution_fence(ctx);
+  // TimingLauncher timer(MEASURE_MICRO_SECONDS);
+  // Future future = runtime->issue_timing_measurement(ctx, timer);
+  // future.get_void_result();
+  // double ts_end = Realm::Clock::current_time_in_microseconds();
+  // double run_time = 1e-6 * (ts_end - ts_start);
+  // printf("ELAPSED TIME = %.4fs, THROUGHPUT = %.2f samples/s\n",
+  //        run_time,
+  //        data_loader.num_samples * ff_config.epochs / run_time);
 }
 
 void parse_input_args(char **argv, int argc, CandleConfig &config) {

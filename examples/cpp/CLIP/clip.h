@@ -29,6 +29,7 @@ struct CLIPConfig {
   // Vision Transformer arguments
   int vt_hidden_size, vt_num_heads, vt_num_layers;
   int in_channels, image_size,  kernel_size, padding;
+  int num_branches;
 };
 
 class DataLoader {
