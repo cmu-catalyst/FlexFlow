@@ -31,27 +31,24 @@ CandleConfig::CandleConfig(void) {
   //   dense_layers.push_back(4192);
   // for (int i = 0; i < 16; i++)
   //   dense_feature_layers.push_back(4192);
-  // dense_layers.push_back(16);
-  // for (int i = 0; i < 6; i++)
-  //   dense_layers.push_back(4096);
-  // for (int i = 0; i < 4; i++)
-  //   dense_feature_layers.push_back(4096);  
-  // feature_shapes["dose"] = 1;
-  // feature_shapes["cell.rnaseq"] = 942;
-  // feature_shapes["drug.descriptors"] = 16384;
-  feature_shapes["drug.descriptors"] = 4096;
-  // feature_shapes["drug.fingerprints"] = 4096;
-  // input_features["dose1"] = "dose";
-  // input_features["dose2"] = "dose";
-  // input_features["cell.rnaseq"] = "cell.rnaseq";
-  // input_features["drug1.descriptors"] = "drug.descriptors";
-  // input_features["drug1.fingerprints"] = "drug.fingerprints";
-  // input_features["drug2.descriptors"] = "drug.descriptors";
-  // input_features["drug2.fingerprints"] = "drug.fingerprints";
-  // input_features["drug3.descriptors"] = "drug.descriptors";
-  // input_features["drug3.fingerprints"] = "drug.fingerprints";
-
-  num_branches = -1; 
+  for (int i = 0; i < 2; i++)
+    dense_layers.push_back(4096);
+  for (int i = 0; i < 4; i++)
+    dense_feature_layers.push_back(4096);  
+  feature_shapes["dose"] = 1;
+  feature_shapes["cell.rnaseq"] = 942;
+  feature_shapes["drug.descriptors"] = 5270;
+  feature_shapes["drug.fingerprints"] = 2048;
+  input_features["dose1"] = "dose";
+  input_features["dose2"] = "dose";
+  input_features["cell.rnaseq"] = "cell.rnaseq";
+  input_features["drug1.descriptors"] = "drug.descriptors";
+  input_features["drug1.fingerprints"] = "drug.fingerprints";
+  input_features["drug2.descriptors"] = "drug.descriptors";
+  input_features["drug2.fingerprints"] = "drug.fingerprints";
+  input_features["drug3.descriptors"] = "drug.descriptors";
+  input_features["drug3.fingerprints"] = "drug.fingerprints";
+  
 }
 
 Tensor build_feature_model(FFModel *model,
@@ -91,9 +88,6 @@ void FlexFlow::top_level_task(Task const *task,
     print_vector("Dense Layers", candle_config.dense_layers);
     print_vector("Dense Feature Layers", candle_config.dense_feature_layers);
   }
-
-  assert(candle_config.num_branches > 0);
-  for (int i = 0; i < candle_config.num_branches; ++i) candle_config.input_features[std::to_string(i)] = "drug.descriptors";
 
   FFModel ff(ff_config);
   set<string> input_models;
@@ -211,10 +205,6 @@ void parse_input_args(char **argv, int argc, CandleConfig &config) {
     }
     if (!strcmp(argv[i], "--dataset")) {
       config.dataset_path = std::string(argv[++i]);
-      continue;
-    }
-    if (!strcmp(argv[i], "--num-branch")) {
-      config.num_branches = atoi(argv[++i]);
       continue;
     }
   }
